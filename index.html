@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyAIBot — Личный AI-ассистент в Telegram</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Geologica:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0A0B;--bg2:#111113;--bg3:#18181B;--accent:#E8622A;--accent2:#FF8A5B;--text:#F4F4F5;--muted:#71717A;--border:#27272A;--card:#141416}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Geologica',sans-serif;overflow-x:hidden}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+nav{padding:20px 0;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,11,0.95);backdrop-filter:blur(12px);z-index:100}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Unbounded',sans-serif;font-weight:900;font-size:18px}
+.logo span{color:var(--accent)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.btn-nav{padding:10px 22px;font-size:14px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none;font-family:'Geologica',sans-serif;font-weight:500;transition:background .2s}
+.btn-nav:hover{background:var(--accent2)}
+.btn{display:inline-block;padding:15px 34px;border-radius:10px;font-family:'Geologica',sans-serif;font-size:15px;font-weight:500;text-decoration:none;transition:all .25s;border:none;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,98,42,.3)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{border-color:var(--muted)}
+.hero{padding:100px 0 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(232,98,42,.1) 0%,transparent 65%);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(232,98,42,.1);border:1px solid rgba(232,98,42,.25);border-radius:100px;padding:6px 16px;font-size:13px;color:var(--accent2);margin-bottom:28px}
+.dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+h1{font-family:'Unbounded',sans-serif;font-size:clamp(32px,6vw,68px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:24px}
+h1 em{color:var(--accent);font-style:normal}
+.hero-sub{font-size:18px;color:var(--muted);max-width:540px;margin:0 auto 48px;font-weight:300;line-height:1.7}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.stats{padding:48px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+.stat-num{font-family:'Unbounded',sans-serif;font-size:32px;font-weight:900;color:var(--accent);display:block}
+.stat-label{font-size:13px;color:var(--muted);margin-top:6px}
+.section{padding:80px 0}
+.section-alt{background:var(--bg2)}
+.tag{font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.section-title{font-family:'Unbounded',sans-serif;font-size:clamp(22px,4vw,40px);font-weight:700;letter-spacing:-1px;line-height:1.1;margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--muted);max-width:500px;font-weight:300;line-height:1.7}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:48px}
+.feature{background:var(--card);padding:32px;transition:background .2s}
+.feature:hover{background:var(--bg3)}
+.f-icon{width:48px;height:48px;background:rgba(232,98,42,.1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px}
+.f-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px}
+.f-desc{font-size:14px;color:var(--muted);line-height:1.7;font-weight:300}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:56px}
+.step-num{font-family:'Unbounded',sans-serif;font-size:52px;font-weight:900;color:rgba(232,98,42,.12);line-height:1;margin-bottom:16px}
+.step-title{font-size:16px;font-weight:500;margin-bottom:10px}
+.step-desc{font-size:14px;color:var(--muted);font-weight:300;line-height:1.7}
+.demo{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:20px;max-width:460px;margin:56px auto 0}
+.demo-head{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.demo-av{width:38px;height:38px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.demo-name{font-size:14px;font-weight:500}
+.demo-online{font-size:12px;color:var(--accent)}
+.msg{margin-bottom:10px;display:flex;flex-direction:column}
+.msg.u{align-items:flex-end}
+.msg.b{align-items:flex-start}
+.bubble{padding:10px 14px;border-radius:12px;font-size:13px;max-width:88%;line-height:1.55}
+.msg.u .bubble{background:var(--accent);color:#fff;border-radius:12px 12px 3px 12px}
+.msg.b .bubble{background:var(--bg2);border:1px solid var(--border);border-radius:12px 12px 12px 3px}
+.t{font-size:11px;color:var(--muted);margin-top:4px}
+.pricing-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:56px}
+.plan{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 18px;transition:all .25s;position:relative;display:flex;flex-direction:column}
+.plan:hover{border-color:rgba(232,98,42,.25);transform:translateY(-3px)}
+.plan.hot{border-color:var(--accent);background:rgba(232,98,42,.04)}
+.plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:100px;white-space:nowrap}
+.plan-emoji{font-size:24px;margin-bottom:12px}
+.plan-name{font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.plan-price{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;letter-spacing:-1px;margin-bottom:2px}
+.plan-price sup{font-size:12px;font-weight:400;font-family:'Geologica',sans-serif;color:var(--muted)}
+.plan-usdt{font-size:11px;color:var(--muted);margin-bottom:14px}
+.plan-msgs{font-size:12px;font-weight:500;color:var(--accent2);margin-bottom:14px}
+.plan-list{list-style:none;margin-bottom:20px;flex:1}
+.plan-list li{font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;font-weight:300}
+.plan-list li:last-child{border:none}
+.ck{color:var(--accent);font-size:13px}
+.plan-btn{width:100%;padding:11px;border-radius:8px;font-family:'Geologica',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;text-align:center;display:block;text-decoration:none;margin-top:auto}
+.plan-btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}
+.plan-btn-o:hover{border-color:var(--accent);color:var(--accent)}
+.plan-btn-f{background:var(--accent);border:1px solid var(--accent);color:#fff}
+.plan-btn-f:hover{background:var(--accent2)}
+.security-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.sec-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px}
+.sec-icon{font-size:28px;margin-bottom:16px}
+.sec-title{font-size:15px;font-weight:500;margin-bottom:8px}
+.sec-desc{font-size:13px;color:var(--muted);line-height:1.7;font-weight:300}
+.cta-section{padding:80px 0;text-align:center}
+.cta-box{background:var(--bg3);border:1px solid var(--border);border-radius:24px;padding:72px 48px;position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-150px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(232,98,42,.07) 0%,transparent 65%);pointer-events:none}
+.cta-title{font-family:'Unbounded',sans-serif;font-size:clamp(22px,4vw,48px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px;position:relative}
+.cta-sub{font-size:17px;color:var(--muted);margin-bottom:40px;font-weight:300;position:relative}
+footer{border-top:1px solid var(--border);padding:32px 0}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:'Unbounded',sans-serif;font-weight:900;font-size:16px}
+.footer-logo span{color:var(--accent)}
+.footer-copy{font-size:13px;color:var(--muted)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none}
+.footer-links a:hover{color:var(--text)}
+@media(max-width:900px){.features-grid,.security-grid{grid-template-columns:repeat(2,1fr)}.pricing-grid{grid-template-columns:repeat(2,1fr)}.stats-grid{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.nav-links{display:none}}
+@media(max-width:600px){.features-grid,.pricing-grid,.security-grid{grid-template-columns:1fr}.hero{padding:60px 0 40px}.cta-box{padding:40px 20px}}
+</style>
+</head>
+<body>
+<nav><div class="container"><div class="nav-inner">
+<div class="logo">MyAI<span>Bot</span></div>
+<ul class="nav-links">
+<li><a href="#features">Возможности</a></li>
+<li><a href="#how">Как работает</a></li>
+<li><a href="#pricing">Тарифы</a></li>
+<li><a href="#security">Безопасность</a></li>
+</ul>
+<a href="https://t.me/AssistForgeBot" class="btn-nav">Создать бота</a>
+</div></div></nav>
+
+<section class="hero"><div class="container">
+<div class="badge"><span class="dot"></span>Работает без VPN · Оплата криптой</div>
+<h1>Твой личный<br>AI-ассистент<br><em>в Telegram</em></h1>
+<p class="hero-sub">Создай бота под себя за 2 минуты. Задай характер, правила, задачи — и он работает только на тебя 24/7. Анализирует фото, читает ссылки, ставит напоминания.</p>
+<div class="hero-btns">
+<a href="https://t.me/AssistForgeBot" class="btn btn-primary">Создать бота бесплатно</a>
+<a href="#how" class="btn btn-outline">Как это работает</a>
+</div>
+</div></section>
+
+<section class="stats"><div class="container"><div class="stats-grid">
+<div><span class="stat-num">2 мин</span><div class="stat-label">до запуска бота</div></div>
+<div><span class="stat-num">24/7</span><div class="stat-label">работает без тебя</div></div>
+<div><span class="stat-num">0</span><div class="stat-label">технических знаний</div></div>
+<div><span class="stat-num">100%</span><div class="stat-label">данные приватны</div></div>
+</div></div></section>
+
+<section class="section" id="features"><div class="container">
+<div class="tag">Возможности</div>
+<div class="section-title">Не просто чат —<br>твой цифровой партнёр</div>
+<p class="section-sub">Всё что умеет ChatGPT, плюс твои правила, твой характер, твоя приватность</p>
+<div class="features-grid">
+<div class="feature"><div class="f-icon">💬</div><div class="f-title">Диалог с памятью</div><div class="f-desc">Помнит всю историю. Знает твои предпочтения и контекст. Не нужно повторять одно и то же каждый раз.</div></div>
+<div class="feature"><div class="f-icon">📸</div><div class="f-title">Анализ фото</div><div class="f-desc">Отправь фото чека, договора или скриншота — бот прочитает текст и проанализирует содержимое.</div></div>
+<div class="feature"><div class="f-icon">🔗</div><div class="f-title">Читает ссылки</div><div class="f-desc">Скинь URL — бот прочитает статью и расскажет суть за 10 секунд. Никаких лонгридов.</div></div>
+<div class="feature"><div class="f-icon">🔍</div><div class="f-title">Веб-поиск</div><div class="f-desc">Актуальные новости, курсы валют, погода. Бот сам найдёт свежую информацию по твоему запросу.</div></div>
+<div class="feature"><div class="f-icon">⏰</div><div class="f-title">Напоминания</div><div class="f-desc">Напомни завтра в 10:00 позвонить Ивану — и бот пришлёт уведомление точно в срок.</div></div>
+<div class="feature"><div class="f-icon">🎭</div><div class="f-title">Твой характер</div><div class="f-desc">Задай как он обращается, на чём специализируется, какие правила соблюдает. Это твой бот.</div></div>
+</div>
+</div></section>
+
+<section class="section section-alt" id="how"><div class="container">
+<div class="tag">Как работает</div>
+<div class="section-title">Три шага до<br>своего ассистента</div>
+<div class="steps">
+<div class="step"><div class="step-num">01</div><div class="step-title">Создай бота в Telegram</div><div class="step-desc">Через @BotFather получи токен своего бота. Занимает 2 минуты, полностью бесплатно.</div></div>
+<div class="step"><div class="step-num">02</div><div class="step-title">Настрой под себя</div><div class="step-desc">Задай имя, характер и правила. Деловой ассистент или дружелюбный советник — решаешь ты.</div></div>
+<div class="step"><div class="step-num">03</div><div class="step-title">Оплати и пользуйся</div><div class="step-desc">Оплата криптой в один клик. Бот активируется мгновенно и работает 24/7 без твоего компьютера.</div></div>
+</div>
+<div class="demo">
+<div class="demo-head"><div class="demo-av">🤖</div><div><div class="demo-name">Мой ассистент</div><div class="demo-online">онлайн</div></div></div>
+<div class="msg u"><div class="bubble">Прочитай статью и скажи главное: habr.com/ru/123</div><div class="t">19:02</div></div>
+<div class="msg b"><div class="bubble">Прочитал. Новый алгоритм Google сжимает файлы на 40% без потери качества. Внедрят в Chrome к Q3 2026.</div><div class="t">19:02</div></div>
+<div class="msg u"><div class="bubble">Напомни завтра в 10:00 позвонить Марине</div><div class="t">19:05</div></div>
+<div class="msg b"><div class="bubble">Напоминание установлено! Завтра в 10:00 напомню позвонить Марине.</div><div class="t">19:05</div></div>
+</div>
+</div></section>
+
+<section class="section" id="pricing"><div class="container">
+<div class="tag">Тарифы</div>
+<div class="section-title">Честные цены.<br>Оплата криптой.</div>
+<p class="section-sub">Все тарифы включают полный набор функций. Разница только в количестве сообщений.</p>
+<div class="pricing-grid">
+<div class="plan"><div class="plan-emoji">🌱</div><div class="plan-name">Старт</div><div class="plan-price">499<sup> ₽/мес</sup></div><div class="plan-usdt">≈ 5.5 USDT</div><div class="plan-msgs">200 сообщений</div><ul class="plan-list"><li><span class="ck">✓</span>Claude AI</li><li><span class="ck">✓</span>Анализ фото</li><li><span class="ck">✓</span>Чтение ссылок</li><li><span class="ck">✓</span>Напоминания</li></ul><a href="https://t.me/AssistForgeBot" class="plan-btn plan-btn-o">Выбрать</a></div>
+<div class="plan"><div class="plan-emoji">🥉</div><div class="plan-name">Базовый</div><div class="plan-price">790<sup> ₽/мес</sup></div><div class="plan-usdt">≈ 8.5 USDT</div><div class="plan-msgs">400 сообщений</div><ul class="plan-list"><li><span class="ck">✓</span>Claude AI</li><li><span class="ck">✓</span>Память диалогов</li><li><span class="ck">✓</span>Веб-поиск</li><li><span class="ck">✓</span>Все фичи Старта</li></ul><a href="https://t.me/AssistForgeBot" class="plan-btn plan-btn-o">Выбрать</a></div>
+<div class="plan hot"><div class="plan-badge">Популярный</div><div class="plan-emoji">🥈</div><div class="plan-name">Стандарт</div><div class="plan-price">1490<sup> ₽/мес</sup></div><div class="plan-usdt">≈ 16 USDT</div><div class="plan-msgs">1000 сообщений</div><ul class="plan-list"><li><span class="ck">✓</span>Claude AI</li><li><span class="ck">✓</span>Длинная память</li><li><span class="ck">✓</span>Документы и фото</li><li><span class="ck">✓</span>Приоритет поддержки</li></ul><a href="https://t.me/AssistForgeBot" class="plan-btn plan-btn-f">Выбрать</a></div>
+<div class="plan"><div class="plan-emoji">🥇</div><div class="plan-name">Про</div><div class="plan-price">2990<sup> ₽/мес</sup></div><div class="plan-usdt">≈ 33 USDT</div><div class="plan-msgs">3000 сообщений</div><ul class="plan-list"><li><span class="ck">✓</span>Claude AI макс</li><li><span class="ck">✓</span>Безлимитная память</li><li><span class="ck">✓</span>Все возможности</li><li><span class="ck">✓</span>VIP поддержка</li></ul><a href="https://t.me/AssistForgeBot" class="plan-btn plan-btn-o">Выбрать</a></div>
+<div class="plan"><div class="plan-emoji">🏢</div><div class="plan-name">Бизнес</div><div class="plan-price">5490<sup> ₽/мес</sup></div><div class="plan-usdt">≈ 60 USDT</div><div class="plan-msgs">5000 сообщений</div><ul class="plan-list"><li><span class="ck">✓</span>Для команд</li><li><span class="ck">✓</span>База знаний</li><li><span class="ck">✓</span>Персональная настройка</li><li><span class="ck">✓</span>Выделенная поддержка</li></ul><a href="https://t.me/AssistForgeBot" class="plan-btn plan-btn-o">Выбрать</a></div>
+</div>
+<p style="text-align:center;color:var(--muted);font-size:13px;margin-top:24px">Оплата: USDT, TON, BTC · Активация мгновенная · Отмена в любой момент</p>
+</div></section>
+
+<section class="section section-alt" id="security"><div class="container">
+<div class="tag">Безопасность</div>
+<div class="section-title">Твои данные —<br>только твои</div>
+<p class="section-sub">Мы не продаём и не передаём данные. Каждый бот изолирован.</p>
+<div class="security-grid">
+<div class="sec-card"><div class="sec-icon">🔒</div><div class="sec-title">Изолированное хранилище</div><div class="sec-desc">Данные каждого бота хранятся в отдельной зашифрованной базе. Никакой общей истории с другими пользователями.</div></div>
+<div class="sec-card"><div class="sec-icon">🚫</div><div class="sec-title">Без передачи третьим лицам</div><div class="sec-desc">Мы не продаём данные, не показываем рекламу и не используем твои диалоги для обучения моделей.</div></div>
+<div class="sec-card"><div class="sec-icon">🛡️</div><div class="sec-title">Твой токен — твой бот</div><div class="sec-desc">Бот создаётся на твоём токене. Ты полностью контролируешь его через @BotFather в любой момент.</div></div>
+</div>
+</div></section>
+
+<section class="cta-section"><div class="container">
+<div class="cta-box">
+<div class="cta-title">Готов попробовать?</div>
+<p class="cta-sub">Первый бот создаётся за 2 минуты. Без VPN, без программирования.</p>
+<a href="https://t.me/AssistForgeBot" class="btn btn-primary" style="font-size:17px;padding:18px 48px">Создать бота сейчас</a>
+</div>
+</div></section>
+
+<footer><div class="container"><div class="footer-inner">
+<div class="footer-logo">MyAI<span>Bot</span></div>
+<div class="footer-links"><a href="https://t.me/AssistForgeBot">Telegram</a><a href="#pricing">Тарифы</a><a href="#security">Безопасность</a></div>
+<div class="footer-copy">© 2026 myaibot.space · Без VPN · Криптооплата</div>
+</div></div></footer>
+</body>
+</html>
